@@ -1,4 +1,4 @@
-const pool = require("../db");
+const pool = require('../db/index');
 
 const getAllDirectors = async () => {
   const result = await pool.query("SELECT * FROM Directors");

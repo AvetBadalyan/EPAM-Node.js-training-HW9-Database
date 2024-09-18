@@ -1,4 +1,4 @@
-const pool = require('../db');
+const pool = require('../db/index');
 
 const getAllActors = async () => {
     const result = await pool.query('SELECT * FROM Actors');
