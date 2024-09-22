@@ -1,12 +1,17 @@
-const db = require("./index");
+import pool from "./index";
 
 const seed = async () => {
   try {
-    await db.query(
-      "TRUNCATE TABLE Ratings, Movies, Genres, Actors, Directors RESTART IDENTITY CASCADE"
-    );
+    // Drop existing tables in the correct order
+    await pool.query("DROP TABLE IF EXISTS MovieGenres");
+    await pool.query("DROP TABLE IF EXISTS Ratings");
+    await pool.query("DROP TABLE IF EXISTS Movies");
+    await pool.query("DROP TABLE IF EXISTS Genres");
+    await pool.query("DROP TABLE IF EXISTS Actors");
+    await pool.query("DROP TABLE IF EXISTS Directors");
 
-    await db.query(`
+    // Create tables
+    await pool.query(`
       CREATE TABLE IF NOT EXISTS Directors (
         DirectorID SERIAL PRIMARY KEY,
         Name VARCHAR(100),
@@ -14,8 +19,8 @@ const seed = async () => {
         DOB DATE
       );
     `);
-    
-    await db.query(`
+
+    await pool.query(`
       CREATE TABLE IF NOT EXISTS Actors (
         ActorID SERIAL PRIMARY KEY,
         Name VARCHAR(100),
@@ -23,86 +28,97 @@ const seed = async () => {
         DOB DATE
       );
     `);
-    
 
-    await db.query(`
-      INSERT INTO Directors (DirectorID, Name, Nationality, DOB) VALUES
-      -- Armenian Directors
-      (1, 'Hratch Keshishyan', 'Armenian', '1951-05-19'),
-      -- French Directors
-      (2, 'Luc Besson', 'French', '1959-03-18'),
-      -- American Directors
-      (3, 'Woody Allen', 'American', '1935-12-01');
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS Genres (
+        GenreID SERIAL PRIMARY KEY,
+        GenreName VARCHAR(100)
+      );
     `);
 
-    await db.query(`
-      INSERT INTO Actors (ActorID, Name, Nationality, DOB) VALUES
-      -- Armenian Actors
-      (1, 'Angela Safaryan', 'Armenian', '1985-11-25'),
-      (2, 'Frunzik Mkrtchyan', 'Armenian', '1930-09-04'),
-      (3, 'Nazeni Hovhanisyan', 'Armenian', '1948-05-29'),
-      (4, 'Khoren Levonyan', 'Armenian', '1930-08-06'),
-      -- American Actors
-      (5, 'Leonardo DiCaprio', 'American', '1974-11-11'),
-      (6, 'Meryl Streep', 'American', '1949-06-22'),
-      -- French Actors
-      (7, 'Juliette Binoche', 'French', '1964-03-09'),
-      (8, 'Omar Sy', 'French', '1978-01-20'),
-      -- Italian Actors
-      (9, 'Adriano Celentano', 'Italian', '1938-01-06'),
-      (10, 'Sophia Loren', 'Italian', '1934-09-20');
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS Movies (
+        MovieID SERIAL PRIMARY KEY,
+        Title VARCHAR(100),
+        ReleaseYear INT,
+        DirectorID INT REFERENCES Directors(DirectorID)
+      );
     `);
 
-    await db.query(`
-      INSERT INTO Genres (GenreID, GenreName) VALUES
-      (1, 'Drama'),
-      (2, 'Comedy'),
-      (3, 'Romance'),
-      (4, 'Action'),
-      (5, 'Thriller');
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS Ratings (
+        MovieID INT REFERENCES Movies(MovieID),
+        Rating DECIMAL(2, 1),
+        PRIMARY KEY (MovieID)
+      );
     `);
 
-    await db.query(`
-      INSERT INTO Movies (MovieID, Title, ReleaseYear, DirectorID) VALUES
-      -- Armenian Movies
-      (1, 'Lost & Found in Armenia', 2017, 1),
-      (2, 'The Line', 2020, 1),
-      (3, 'Poker.am', 2019, 1),
-      (4, 'Ararat', 2002, 1),
-      (5, 'Gikor', 2017, 1),
-      (6, 'Earthquake', 2022, 1),
-      -- American Movies
-      (7, 'Inception', 2010, 3),
-      (8, 'The Devil Wears Prada', 2006, 3),
-      -- French Movies
-      (9, 'Léon: The Professional', 1994, 2),
-      (10, 'The Fifth Element', 1997, 2),
-      -- Italian Movies
-      (11, 'La Dolce Vita', 1960, 2),
-      (12, 'Cinema Paradiso', 1988, 2);
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS MovieGenres (
+        MovieID INT REFERENCES Movies(MovieID),
+        GenreID INT REFERENCES Genres(GenreID),
+        PRIMARY KEY (MovieID, GenreID)
+      );
     `);
 
-    await db.query(`
+    // Now insert data into the tables
+    await pool.query(`
+      INSERT INTO Directors (Name, Nationality, DOB) VALUES
+      ('Hratch Keshishyan', 'Armenian', '1951-05-19'),
+      ('Luc Besson', 'French', '1959-03-18'),
+      ('Woody Allen', 'American', '1935-12-01');
+    `);
+
+    await pool.query(`
+      INSERT INTO Actors (Name, Nationality, DOB) VALUES
+      ('Angela Safaryan', 'Armenian', '1985-11-25'),
+      ('Frunzik Mkrtchyan', 'Armenian', '1930-09-04'),
+      ('Nazeni Hovhanisyan', 'Armenian', '1948-05-29'),
+      ('Khoren Levonyan', 'Armenian', '1930-08-06'),
+      ('Leonardo DiCaprio', 'American', '1974-11-11');
+    `);
+
+    await pool.query(`
+      INSERT INTO Genres (GenreName) VALUES
+      ('Drama'),
+      ('Comedy'),
+      ('Romance'),
+      ('Action'),
+      ('Thriller');
+    `);
+
+    await pool.query(`
+      INSERT INTO Movies (Title, ReleaseYear, DirectorID) VALUES
+      ('Lost & Found in Armenia', 2017, 1),
+      ('The Line', 2020, 1),
+      ('Poker.am', 2019, 1),
+      ('Inception', 2010, 3),
+      ('Léon: The Professional', 1994, 2);
+    `);
+
+    await pool.query(`
       INSERT INTO Ratings (MovieID, Rating) VALUES
       (1, 7.9),
       (2, 8.1),
       (3, 8.3),
       (4, 8.5),
-      (5, 8.2),
-      (6, 8.4),
-      (7, 8.8),
-      (8, 8.6),
-      (9, 8.9),
-      (10, 8.7),
-      (11, 8.3),
-      (12, 8.5);
+      (5, 8.2);
+    `);
+
+    await pool.query(`
+      INSERT INTO MovieGenres (MovieID, GenreID) VALUES
+      (1, 1),  -- Lost & Found in Armenia - Drama
+      (2, 2),  -- The Line - Comedy
+      (3, 1),  -- Poker.am - Drama
+      (4, 3),  -- Inception - Action
+      (5, 4);  -- Léon: The Professional - Action
     `);
 
     console.log("Database seeded successfully");
   } catch (error) {
     console.error("Error seeding database:", error);
   } finally {
-    await db.end();
+    await pool.end();
   }
 };
 

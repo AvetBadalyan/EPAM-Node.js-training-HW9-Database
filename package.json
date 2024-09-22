@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node app.js"
+    "start": "node build/app.js",
+    "seed": "node build/db/seed.js"
   },
   "keywords": [],
   "author": "",
