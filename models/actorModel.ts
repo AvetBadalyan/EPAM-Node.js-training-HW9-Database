@@ -1,6 +1,6 @@
 import pool from '../db/index';
 
-interface Actor {
+export interface Actor {
   ActorID: number;
   Name: string;
   Nationality: string;
