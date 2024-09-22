@@ -26,5 +26,5 @@ export const updateExistingRating = async (
 };
 
 export const removeRating = async (movieId: number): Promise<void> => {
-  return await ratingModel.deleteRating(movieId);
+  await ratingModel.deleteRating(movieId);
 };
