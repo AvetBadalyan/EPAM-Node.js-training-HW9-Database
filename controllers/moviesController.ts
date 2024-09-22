@@ -5,12 +5,9 @@ export const getAllMovies = async (req: Request, res: Response): Promise<void> =
     try {
         const movies = await moviesService.fetchAllMovies();
         res.json(movies);
-    } catch (err: unknown) {
-        if (err instanceof Error) {
-            res.status(500).json({ error: err.message });
-        } else {
-            res.status(500).json({ error: 'Error fetching movies' });
-        }
+    } catch (err) {
+        const error = err as Error;
+        res.status(500).json({ error: error.message });
     }
 };
 
@@ -22,12 +19,9 @@ export const getMovieById = async (req: Request, res: Response): Promise<void> =
         } else {
             res.status(404).json({ message: 'Movie not found' });
         }
-    } catch (err: unknown) {
-        if (err instanceof Error) {
-            res.status(500).json({ error: err.message });
-        } else {
-            res.status(500).json({ error: 'Error fetching movie' });
-        }
+    } catch (err) {
+        const error = err as Error;
+        res.status(500).json({ error: error.message });
     }
 };
 
@@ -36,12 +30,9 @@ export const createMovie = async (req: Request, res: Response): Promise<void> =>
         const { title, releaseYear, directorID } = req.body;
         const newMovie = await moviesService.createNewMovie(title, releaseYear, directorID);
         res.status(201).json(newMovie);
-    } catch (err: unknown) {
-        if (err instanceof Error) {
-            res.status(500).json({ error: err.message });
-        } else {
-            res.status(500).json({ error: 'Error creating movie' });
-        }
+    } catch (err) {
+        const error = err as Error;
+        res.status(500).json({ error: error.message });
     }
 };
 
@@ -54,12 +45,9 @@ export const updateMovie = async (req: Request, res: Response): Promise<void> =>
         } else {
             res.status(404).json({ message: 'Movie not found' });
         }
-    } catch (err: unknown) {
-        if (err instanceof Error) {
-            res.status(500).json({ error: err.message });
-        } else {
-            res.status(500).json({ error: 'Error updating movie' });
-        }
+    } catch (err) {
+        const error = err as Error;
+        res.status(500).json({ error: error.message });
     }
 };
 
@@ -67,11 +55,8 @@ export const deleteMovie = async (req: Request, res: Response): Promise<void> =>
     try {
         await moviesService.removeMovie(Number(req.params.id));
         res.status(204).json();
-    } catch (err: unknown) {
-        if (err instanceof Error) {
-            res.status(500).json({ error: err.message });
-        } else {
-            res.status(500).json({ error: 'Error deleting movie' });
-        }
+    } catch (err) {
+        const error = err as Error;
+        res.status(500).json({ error: error.message });
     }
 };
