@@ -2,7 +2,7 @@ import pool from "./index";
 
 const seed = async () => {
   try {
-    // Drop existing tables in the correct order
+   
     await pool.query("DROP TABLE IF EXISTS MovieGenres");
     await pool.query("DROP TABLE IF EXISTS Ratings");
     await pool.query("DROP TABLE IF EXISTS Movies");
@@ -10,7 +10,7 @@ const seed = async () => {
     await pool.query("DROP TABLE IF EXISTS Actors");
     await pool.query("DROP TABLE IF EXISTS Directors");
 
-    // Create tables
+
     await pool.query(`
       CREATE TABLE IF NOT EXISTS Directors (
         DirectorID SERIAL PRIMARY KEY,
@@ -61,7 +61,7 @@ const seed = async () => {
       );
     `);
 
-    // Now insert data into the tables
+  
     await pool.query(`
       INSERT INTO Directors (Name, Nationality, DOB) VALUES
       ('Hratch Keshishyan', 'Armenian', '1951-05-19'),
