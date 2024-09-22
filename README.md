@@ -2,9 +2,7 @@
 
 This project is a Movie Database application that allows users to manage information about directors, actors, movies, genres, and ratings. It provides a RESTful API built with TypeScript, Express.js, and PostgreSQL.
 
-## Getting Started
-
-### You must have installed
+## You must have installed
 
 - Node.js
 - PostgreSQL
