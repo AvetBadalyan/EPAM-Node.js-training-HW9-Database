@@ -1,5 +1,6 @@
-const express = require('express');
-const ratingsController = require('../controllers/ratingsController');
+import express from 'express';
+import * as ratingsController from '../controllers/ratingsController';
+
 const router = express.Router();
 
 router.get('/', ratingsController.getAllRatings);
@@ -8,4 +9,4 @@ router.post('/', ratingsController.createRating);
 router.put('/:movieId', ratingsController.updateRating);
 router.delete('/:movieId', ratingsController.deleteRating);
 
-module.exports = router;
+export default router;
