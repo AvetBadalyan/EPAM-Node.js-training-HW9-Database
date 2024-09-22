@@ -7,6 +7,25 @@ const seed = async () => {
     );
 
     await db.query(`
+      CREATE TABLE IF NOT EXISTS Directors (
+        DirectorID SERIAL PRIMARY KEY,
+        Name VARCHAR(100),
+        Nationality VARCHAR(100),
+        DOB DATE
+      );
+    `);
+    
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS Actors (
+        ActorID SERIAL PRIMARY KEY,
+        Name VARCHAR(100),
+        Nationality VARCHAR(100),
+        DOB DATE
+      );
+    `);
+    
+
+    await db.query(`
       INSERT INTO Directors (DirectorID, Name, Nationality, DOB) VALUES
       -- Armenian Directors
       (1, 'Hratch Keshishyan', 'Armenian', '1951-05-19'),
