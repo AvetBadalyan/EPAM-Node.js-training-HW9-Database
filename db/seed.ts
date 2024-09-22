@@ -2,14 +2,12 @@ import pool from "./index";
 
 const seed = async () => {
   try {
-   
-    await pool.query("DROP TABLE IF EXISTS MovieGenres");
-    await pool.query("DROP TABLE IF EXISTS Ratings");
-    await pool.query("DROP TABLE IF EXISTS Movies");
-    await pool.query("DROP TABLE IF EXISTS Genres");
-    await pool.query("DROP TABLE IF EXISTS Actors");
-    await pool.query("DROP TABLE IF EXISTS Directors");
-
+    await pool.query("DROP TABLE IF EXISTS MovieGenres CASCADE");
+    await pool.query("DROP TABLE IF EXISTS Ratings CASCADE");
+    await pool.query("DROP TABLE IF EXISTS Movies CASCADE");
+    await pool.query("DROP TABLE IF EXISTS Genres CASCADE");
+    await pool.query("DROP TABLE IF EXISTS Actors CASCADE");
+    await pool.query("DROP TABLE IF EXISTS Directors CASCADE");
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS Directors (
@@ -41,13 +39,13 @@ const seed = async () => {
         MovieID SERIAL PRIMARY KEY,
         Title VARCHAR(100),
         ReleaseYear INT,
-        DirectorID INT REFERENCES Directors(DirectorID)
+        DirectorID INT REFERENCES Directors(DirectorID) ON DELETE CASCADE
       );
     `);
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS Ratings (
-        MovieID INT REFERENCES Movies(MovieID),
+        MovieID INT REFERENCES Movies(MovieID) ON DELETE CASCADE,
         Rating DECIMAL(2, 1),
         PRIMARY KEY (MovieID)
       );
@@ -55,13 +53,12 @@ const seed = async () => {
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS MovieGenres (
-        MovieID INT REFERENCES Movies(MovieID),
-        GenreID INT REFERENCES Genres(GenreID),
+        MovieID INT REFERENCES Movies(MovieID) ON DELETE CASCADE,
+        GenreID INT REFERENCES Genres(GenreID) ON DELETE CASCADE,
         PRIMARY KEY (MovieID, GenreID)
       );
     `);
 
-  
     await pool.query(`
       INSERT INTO Directors (Name, Nationality, DOB) VALUES
       ('Hratch Keshishyan', 'Armenian', '1951-05-19'),
